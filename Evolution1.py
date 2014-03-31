@@ -5,7 +5,8 @@ Created on Fri Mar 28 17:12:13 2014
 @author: tmold_000
 """
 import numpy as np
-import operator
+import matplotlib.pyplot as plt
+
 
 class evolution: 
     target = [];
@@ -15,6 +16,8 @@ class evolution:
     initSize = 0;
     growthRate = 0; "number of children per couple"
     maxIterations = 0;
+    fidelityConstant = 2; "mulitplied by population size to determine number of unique partners each individual can have in a generation"
+    averageFitness = [];
     
 
     def __init__(self, target, mutationRate, growthRate, maxPopSize, initSize, maxIterations):
@@ -39,8 +42,11 @@ class evolution:
         self.start(); "begins with the first population of organisms"
         for n in range(self.maxIterations):
             print("Generation", n);
-            print(self.population);
-            print(self.popFitness());
+            popFit = self.popFitness()
+            avg = np.mean(popFit);
+            print(popFit);
+            print(avg);
+            self.averageFitness.append(avg);
             self.killStep();
             self.breedStep();
            
@@ -59,18 +65,18 @@ class evolution:
     def breedStep(self):
         population = self.population;
         newPop = []
-        for n in range(len(population)/2):
+        for n in range(int(self.fidelityConstant*len(population))):
             #print('new parents')
             parent1 = population[np.random.randint(0,len(population))];
             parent2 = population[np.random.randint(0,len(population))];
             for i in range(self.growthRate):
-                child = self.breed(parent1, parent2);
+                child = self.crossover(parent1, parent2);
                 self.mutate(child);
                 newPop.append(child);   
         self.population = newPop
             
 
-    def breed(self, parent1, parent2):
+    def crossover(self, parent1, parent2):
         child = []
         for n in range(len(parent1)):
             parent = np.random.randint(0,2); "0 is assigned to first parent, 1 to second"
@@ -91,10 +97,11 @@ class evolution:
         for n in range(len(self.population)):
             fitnessArr.append(self.fitness(self.population[n]));
         return fitnessArr;
-        
-        
-e = evolution([0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1], 0.12, 5, 10, 7, 500);
+
+e = evolution([0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1], 0, 5, 10, 7, 50);
 e.evolve();
+avgs = e.averageFitness;
+plt.plot(range(len(avgs)), avgs);
 
 
 
