@@ -16,17 +16,18 @@ class evolution:
     initSize = 0;
     growthRate = 0; "number of children per couple"
     maxIterations = 0;
-    fidelityConstant = 2; "mulitplied by population size to determine number of unique partners each individual can have in a generation"
+    fidelityConstant = 2; "mulitplied by population size to determine expected number of unique partners each individual will have in a generation"
     averageFitness = [];
     
 
-    def __init__(self, target, mutationRate, growthRate, maxPopSize, initSize, maxIterations):
+    def __init__(self, target, mutationRate, growthRate, maxPopSize, initSize, fidelityConstant, maxIterations):
       self.target = target;
       self.mutationRate = mutationRate;
       self.maxPopSize = maxPopSize
       self.initSize = initSize
       self.maxIterations = maxIterations;
       self.growthRate = growthRate
+      self.fidelityConstant = fidelityConstant;
 
     def start(self):
         length = len(self.target);
@@ -98,10 +99,20 @@ class evolution:
             fitnessArr.append(self.fitness(self.population[n]));
         return fitnessArr;
 
-e = evolution([0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1], 0, 5, 10, 7, 50);
+
+target = [0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1];
+mutationRate = 0;
+growthRate = 3;
+maxPopSize = 6
+initSize = 2
+fidelityConstant = 1;
+maxIterations = 50; 
+      
+    
+
+e = evolution(target, mutationRate, growthRate, maxPopSize, initSize, fidelityConstant, maxIterations)
 e.evolve();
 avgs = e.averageFitness;
 plt.plot(range(len(avgs)), avgs);
-
 
 
